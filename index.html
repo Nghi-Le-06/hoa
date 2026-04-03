@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vườn hoa cho Phương 🌸</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Comic Sans MS", cursive;
+  background: linear-gradient(180deg, #ffd6e8, #e0c3fc, #c2f0f7);
+  touch-action: none;
+}
+
+/* TEXT */
+#intro {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  color: #ff4da6;
+  font-size: 18px;
+}
+
+/* GARDEN */
+#garden {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* SEED */
+.seed {
+  position: absolute;
+  font-size: 16px;
+}
+
+/* PLANT */
+.plant {
+  position: absolute;
+  width: 40px;
+  height: 100px;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  animation: grow 0.8s forwards;
+}
+
+/* STEM */
+.stem {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  height: 70px;
+  background: #4CAF50;
+  transform: translateX(-50%);
+}
+
+/* LEAF */
+.leaf {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  background: #66bb6a;
+  border-radius: 50%;
+}
+
+.leaf.left {
+  left: -10px;
+  bottom: 35px;
+  transform: rotate(-30deg);
+}
+
+.leaf.right {
+  right: -10px;
+  bottom: 25px;
+  transform: rotate(30deg);
+}
+
+/* FLOWER */
+.flower {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  animation: bloom 0.4s forwards;
+}
+
+/* PETAL */
+.petal {
+  position: absolute;
+  width: 14px;
+  height: 20px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform-origin: center bottom;
+}
+
+/* CENTER */
+.center {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffd966;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* WATER */
+.water {
+  position: absolute;
+  width: 4px;
+  height: 14px;
+  background: #66ccff;
+  border-radius: 10px;
+  opacity: 0.8;
+  animation: fall 0.6s linear forwards;
+}
+
+/* MESSAGE */
+#messageBox {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff0f6;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+/* ANIMATION */
+@keyframes grow {
+  to { transform: scaleY(1); }
+}
+
+@keyframes bloom {
+  0% { transform: translateX(-50%) scale(0); }
+  70% { transform: translateX(-50%) scale(1.3); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro">em ơi… giữ tay để tưới nước nha 💧</div>
+<div id="garden"></div>
+<div id="messageBox"></div>
+
+<script>
+const garden = document.getElementById("garden");
+
+let timer = 0;
+let interval;
+let isWatering = false;
+
+/* MESSAGE */
+const messages = [
+  "Nhợn thương em nhiều lắm 💖",
+  "Em là điều dễ thương nhất",
+  "Ở bên Trứng mỏng nhợn vui lắm",
+  "Điều tuyệt vời nhất với nhợn 🥺",
+  "Là làm em cười mỗi ngày 🌈",
+  "Mình yêu em nhiều nhắm, em pé đáng eo 🌸"
+];
+
+/* SEEDS */
+for (let i = 0; i < 20; i++) {
+  const seed = document.createElement("div");
+  seed.className = "seed";
+  seed.innerText = "🌱";
+  seed.style.left = Math.random() * 95 + "%";
+  seed.style.top = (70 + Math.random() * 20) + "%";
+  garden.appendChild(seed);
+}
+
+/* POINTER EVENTS */
+document.addEventListener("pointerdown", (e) => {
+  isWatering = true;
+  startWater(e);
+});
+
+document.addEventListener("pointerup", () => {
+  isWatering = false;
+  clearInterval(interval);
+});
+
+/* WATER FOLLOW FINGER */
+function startWater(e) {
+  interval = setInterval(() => {
+    timer += 0.1;
+
+    for (let i = 0; i < 8; i++) {
+      const drop = document.createElement("div");
+      drop.className = "water";
+
+      drop.style.left = (e.clientX + (Math.random()*30-15)) + "px";
+      drop.style.top = (e.clientY) + "px";
+
+      document.body.appendChild(drop);
+      setTimeout(() => drop.remove(), 600);
+    }
+
+    if (timer >= 5) {
+      clearInterval(interval);
+      growGarden();
+    }
+
+  }, 50);
+}
+
+/* CREATE FLOWER */
+function createFlower(color) {
+  const flower = document.createElement("div");
+  flower.className = "flower";
+
+  for (let i = 0; i < 6; i++) {
+    const petal = document.createElement("div");
+    petal.className = "petal";
+    petal.style.background = color;
+
+    const angle = i * 60;
+    petal.style.transform =
+      `translate(-50%, -100%) rotate(${angle}deg)`;
+
+    flower.appendChild(petal);
+  }
+
+  const center = document.createElement("div");
+  center.className = "center";
+  flower.appendChild(center);
+
+  return flower;
+}
+
+/* GROW GARDEN */
+function growGarden() {
+  document.querySelectorAll(".seed").forEach(s => s.remove());
+
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+
+      const plant = document.createElement("div");
+      plant.className = "plant";
+
+      plant.style.left = Math.random() * 95 + "%";
+      plant.style.top = (40 + Math.random() * 55) + "%";
+
+      plant.innerHTML = `
+        <div class="stem"></div>
+        <div class="leaf left"></div>
+        <div class="leaf right"></div>
+      `;
+
+      const colors = ["#ff99cc", "#ffccff", "#ffd966"];
+      const color = colors[Math.floor(Math.random()*3)];
+
+      const flower = createFlower(color);
+      plant.appendChild(flower);
+
+      plant.onclick = () => {
+        const msg = messages[Math.floor(Math.random() * messages.length)];
+        showMessage(msg);
+      };
+
+      garden.appendChild(plant);
+
+    }, i * 40);
+  }
+}
+
+/* SHOW MESSAGE */
+function showMessage(text) {
+  const box = document.getElementById("messageBox");
+  box.innerText = text;
+  box.style.opacity = 1;
+}
+</script>
+
+</body>
+</html>
